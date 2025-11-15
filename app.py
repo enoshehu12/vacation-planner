@@ -176,7 +176,7 @@ def index():
 def login():
     if request.method == "POST":
         email = request.form.get("email", "").lower()
-        pin = request.form.get("pin", "")
+        pin = request.form.get("pin", "").strip()
 
         db = SessionLocal()
         user = db.query(User).filter(User.email == email).first()
@@ -186,8 +186,10 @@ def login():
             if user.first_login:
                 session["uid"]=user.id
                 return redirect(url_for("force_change_pin"))
+            #login normal
             session["uid"] = user.id
             flash("Hyrja me sukses!", "success")
+            
             if user.role == "admin":
                 return redirect(url_for("admin_dashboard"))
             return redirect(url_for("me"))
