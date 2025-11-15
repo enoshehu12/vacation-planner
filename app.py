@@ -526,7 +526,9 @@ def me():
   <div>
     <span style="font-size:14px; margin-right:8px;">{{ user.name }}</span>
      <a href="{{ url_for('toggle_theme') }}">Tema: {{ 'Dark' if theme == 'light' else 'Light' }}</a>
-    <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+     {% if user.role == 'admin' %}
+     <a href="{{ url_for('admin_dashboard') }}">Admin</a>
+     {% endif %}
     <a href="{{ url_for('logout') }}">Dil</a>
   </div>
 </header>
@@ -626,8 +628,10 @@ def me():
 @app.route("/admin")
 def admin_dashboard():
     user = get_current_user()
-    if not user or user.role != "admin":
-        return redirect(url_for("login"))
+    if not user:
+      return redirect(url_for("login"))
+    if user.role != "admin":
+        return redirect(url_for("me"))
 
     db = SessionLocal()
     maybe_run_monthly_accrual(db)
