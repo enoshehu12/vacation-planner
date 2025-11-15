@@ -101,6 +101,28 @@ Base.metadata.create_all(engine)
 
 
 # -------------------- HELPERS --------------------
+def ensure_initial_admin():
+    db = SessionLocal()
+    try:
+        count = db.query(User).count()
+        if count == 0:
+            admin = User(
+                name="Admin",
+                email="admin@example.com",
+                pin="1234",           # PIN fillestar
+                role="admin",
+                annual_allowance=22,
+                carryover=0,
+                first_login=True      # që ta ndryshosh PIN-in herën e parë
+            )
+            db.add(admin)
+            db.commit()
+            print("✔ Admini fillestar u krijua: admin@example.com / 1234")
+    finally:
+        db.close()
+
+ensure_initial_admin()
+
 def get_current_user():
     uid = session.get("uid")
     if not uid:
